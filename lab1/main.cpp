@@ -17,39 +17,69 @@ bool isFullSquare(const int& number)
   return false;
 }
 
-void taskOneUserInput()
+vector<int> userVectorInput()
 {
-  unsigned int userInput;
-  vector<int> userInputVector;
-  vector<int> clearVector;
+  int vectorLength;
+  vector<int> userVector;
 
-  cout << endl << "Введите длину вектора: ";
-  cin >> userInput;
+  cout << "Введите длину массива: ";
+  cin >> vectorLength;
   cout << endl;
 
-  // Наполнение массива числами пользователем
-  for (unsigned int i = 0; i < userInput; i++)
+  for (int i = 0; i < vectorLength; i++)
   {
     int enteredNumber;
     cout << "Введите число: ";
     cin >> enteredNumber;
+    userVector.push_back(enteredNumber);
+  }
 
-    // Добавление введенных чисел обычный массив
-    userInputVector.push_back(enteredNumber);
+  return userVector;
+}
 
-    // Массив чисел не являющихся полными квадратами
-    if (!isFullSquare(enteredNumber))
-      clearVector.push_back(enteredNumber);
+bool containsDigitThree(int number)
+{
+  number = abs(number);
+  if (number < 0)
+    return false;
+
+  while (number > 0)
+  {
+    // Если остаток будет равен 3, иначе сдвинем число на одну позицию и отбросим остаток
+    if (number % 10 == 3)
+      return true;
+    number /= 10;
+  }
+
+  return false;
+}
+
+void taskOneUserInput()
+{
+  int userInput;
+  const vector<int> userVector = userVectorInput();
+  vector<int> clearVector;
+
+  for (const int& number : userVector)
+  {
+    if (!isFullSquare(number))
+      clearVector.push_back(number);
   }
 
   // Вывод всего массивов
   cout << endl << "Исходный массив: ";
-  for (const int& vectorNumber : userInputVector)
+  for (const int& vectorNumber : userVector)
     cout << vectorNumber << " ";
 
   cout << endl << "Массив убранных полных квадратов: ";
   for (const int& clearNumber : clearVector)
     cout << clearNumber << " ";
+}
+
+
+void taskTwoTriplets()
+{
+  const vector<int> userVector = userVectorInput();
 }
 
 int main()
