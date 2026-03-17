@@ -16,7 +16,10 @@ foreach(LAB_MAIN IN LISTS LAB_SOURCES)
     # Имя папки = имя исполняемого файла
     get_filename_component(LAB_NAME ${LAB_DIR} NAME)
 
-    add_executable(${LAB_NAME} ${LAB_MAIN})
+    add_executable(${LAB_NAME} ${LAB_MAIN}
+            lab3/banknote.cpp
+            lab3/date.h
+            lab3/date.cpp)
 
     # Общие предупреждения (по желанию)
     target_compile_options(${LAB_NAME} PRIVATE
