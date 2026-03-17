@@ -1,7 +1,7 @@
 #include <iostream>
 #include "banknote.h"
 
-using namespace std;
+using std::cout;
 
 // Реализация конструкторов
 Banknote::Banknote() : billDenominator(0), amount(0)

@@ -4,25 +4,31 @@
 
 using namespace std;
 
+unsigned int Date::objectsCount = 0;
+
 Date::Date() : day(1), month("January"), year(2026)
 {
   cout << "Инициализация стандартной даты" << endl;
+  objectsCount++;
 }
 
 Date::Date(const int day, const string month, const int year) : day(day), month(month), year(year)
 {
   cout << "Инициализация даты с помощью параметров" << endl;
+  objectsCount++;
 }
 
 Date::Date(const Date& date) : day(date.day), month(date.month), year(date.year)
 {
   cout << "Инициализация даты копированием" << endl;
+  objectsCount++;
 }
 
 Date::~Date()
 {
   cout << "\n--- Удаление даты ---"
           "\n" << day << " / " << month << " / " << year << endl;
+  objectsCount--;
 }
 
 int Date::getDay() const
@@ -38,6 +44,10 @@ string Date::getMonth() const
 int Date::getYear() const
 {
   return year;
+}
+
+unsigned int Date::getObjectsCount() {
+  return objectsCount;
 }
 
 void Date::setDay(const int day)

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-using namespace std;
+using std::string;
 
 class Date
 {
@@ -9,6 +9,7 @@ class Date
   int day;
   string month;
   int year;
+  static unsigned int objectsCount;
 
   public:
   Date();
@@ -20,6 +21,7 @@ class Date
   int getDay() const;
   string getMonth() const;
   int getYear() const;
+  static unsigned int getObjectsCount();
 
   void setDay(int day);
   void setMonth(string month);

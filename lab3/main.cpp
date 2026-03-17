@@ -39,6 +39,7 @@ void taskTwo()
   Date firstDate;
   Date secondDate(10, "Января", 2077);
   Date thirdDate = secondDate;
+  cout << "Количество созданных экземпляров: " << Date::getObjectsCount() << endl;
 
   cout << "\n--- Замена значений на новые ---" << endl;
   firstDate.setDay(100);
@@ -70,6 +71,7 @@ int main()
     break;
   case 2:
     taskTwo();
+    cout << "\nКоличество созданных экземпляров: " << Date::getObjectsCount() << endl;
     break;
   default:
     cout << "Выбранного задания нет" << endl;
