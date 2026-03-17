@@ -21,8 +21,7 @@ vector<int> userVectorInput()
 {
   int vectorLength;
   vector<int> userVector;
-
-  cout << "Введите длину массива: ";
+  cout << endl << "Введите длину массива: ";
   cin >> vectorLength;
   cout << endl;
 
@@ -54,9 +53,24 @@ bool containsDigitThree(int number)
   return false;
 }
 
+bool isPrime(const int& number)
+{
+  if (number < 2)
+    return false;
+
+  // Проверка на простое число перебором делителей
+  int divider = 3;
+  while (divider <= round(sqrt(number)))
+  {
+    if (number % divider == 0)
+      return false;
+    divider++;
+  }
+  return true;
+}
+
 void taskOneUserInput()
 {
-  int userInput;
   const vector<int> userVector = userVectorInput();
   vector<int> clearVector;
 
@@ -66,7 +80,7 @@ void taskOneUserInput()
       clearVector.push_back(number);
   }
 
-  // Вывод всего массивов
+  // Вывод всех массивов
   cout << endl << "Исходный массив: ";
   for (const int& vectorNumber : userVector)
     cout << vectorNumber << " ";
@@ -79,13 +93,38 @@ void taskOneUserInput()
 
 void taskTwoTriplets()
 {
+  unsigned int tripletsCount = 0;
+  int minSum = numeric_limits<int>::max();
   const vector<int> userVector = userVectorInput();
+
+  for (size_t i = 0; i < userVector.size() - 2; i++)
+  {
+    cout << endl << userVector[i] << " " << userVector[i + 1] << " " << userVector[i + 2] << endl;
+    if (containsDigitThree(userVector[i]) and containsDigitThree(userVector[i + 1]) and
+        containsDigitThree(userVector[i + 2]))
+    {
+      // Тестовый набор 3 13 31 23 1
+      if (int tripletsSum = userVector[i] + userVector[i + 1] + userVector[i + 2]; isPrime(tripletsSum))
+      {
+        tripletsCount++;
+        if (tripletsSum < minSum)
+          minSum = tripletsSum;
+      }
+    }
+  }
+
+  cout << endl
+       << "Количество троек, в каждом из чисел которых есть цифра 3: " << tripletsCount << endl
+       << "Минимальная сумма троек: " << minSum << endl;
 }
 
 int main()
 {
   unsigned int userTaskChoose;
-  cout << "Выберите задание: \n1 - (Ввод массива)" << endl;
+  cout << "Выберите задание: "
+          "\n1 - (Массив без полных квадратов)"
+          "\n2 - (Тройки чисел)"
+       << endl;
   cin >> userTaskChoose;
 
   switch (userTaskChoose)
@@ -94,6 +133,7 @@ int main()
     taskOneUserInput();
     break;
   case 2:
+    taskTwoTriplets();
     break;
   default:
     cout << "Выбранного задания нет в списке";
