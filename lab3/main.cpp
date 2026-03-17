@@ -1,82 +1,25 @@
 #include <iostream>
 #include "banknote.h"
+#include "date.h"
 
 using namespace std;
 
-// Реализация конструкторов
-Banknote::Banknote() : billDenominator(0), amount(0)
-{
-  cout << endl << "Создана купюра по умолчанию" << endl;
-}
-
-Banknote::Banknote(const int billDenominator, const int amount) : billDenominator(billDenominator), amount(amount)
-{
-  cout << endl << "Создана купюра с указанием параметров" << endl;
-}
-
-Banknote::Banknote(const Banknote& bn) : billDenominator(bn.billDenominator), amount(bn.amount)
-{
-  cout << endl << "Копирование купюры" << endl;
-}
-
-// Реализация деконструктора
-Banknote::~Banknote()
-{
-  cout << endl << "Удаление купюр количеством в " << amount << " и номиналом в " << billDenominator << endl;
-}
-
-// Реализация геттеров
-int Banknote::getBillDenominator() const {
-  return billDenominator;
-}
-
-int Banknote::getAmount() const
-{
-  return amount;
-}
-
-// Реализация сеттеров
-void Banknote::setBillDenominator(int billDenominator)
-{
-  if (billDenominator >= 0)
-    this->billDenominator = billDenominator;
-  else
-    cout << endl << "Номинал должен быть не меньше 0" << endl;
-}
-
-void Banknote::setAmount(int amount)
-{
-  if (amount >= 0)
-    this->amount = amount;
-  else
-    cout << endl << "Количество не должно быть меньше 0" << endl;
-}
-
-// Реализация методов
-int Banknote::printTotalAmount() const {
-  return amount * billDenominator;
-}
-
-void Banknote::printBill() const
-{
-  cout << endl << "Количество банкнот: " << amount << " с номиналом " << billDenominator <<endl;
-}
-
-int main()
+void taskOne()
 {
   // Создание экземпляров класса
+  cout << "\n--- Объявление и инициализация экземпляров класса ---" << endl;
   Banknote firstBanknote;
   Banknote secondBanknote(1000, 50);
   Banknote thirdBanknote = secondBanknote;
 
   // Вызов сеттеров
-  cout << endl << "Замена на значений на новые у первой банкноты" << endl;
+  cout << "\n--- Замена на значений на новые у первой банкноты ---" << endl;
   firstBanknote.setAmount(-1);
   firstBanknote.setAmount(1000);
   firstBanknote.setBillDenominator(-1);
   firstBanknote.setBillDenominator(5000);
 
-  cout << endl << "Вывод значений всех банкнот" << endl;
+  cout << "\n--- Вывод значений всех банкнот ---" << endl;
   cout << endl << "Первая:";
   firstBanknote.printBill();
   cout << "Общий номинал " << firstBanknote.printTotalAmount() << endl;
@@ -88,9 +31,47 @@ int main()
   cout << endl << "Третья:";
   thirdBanknote.printBill();
   cout << "Общий номинал " << thirdBanknote.printTotalAmount() << endl;
+}
 
-  // Вызов деконструкторов
-  firstBanknote.~Banknote();
-  secondBanknote.~Banknote();
-  thirdBanknote.~Banknote();
+void taskTwo()
+{
+  cout << "\n--- Объявление и инициализация экземпляров класса ---" << endl;
+  Date firstDate;
+  Date secondDate(10, "Января", 2077);
+  Date thirdDate = secondDate;
+
+  cout << "\n--- Замена значений на новые ---" << endl;
+  firstDate.setDay(100);
+  firstDate.setDay(6);
+  firstDate.setMonth("Март");
+  firstDate.setYear(1001);
+  firstDate.setYear(2006);
+
+  cout << "\n--- Вывод всех дат ---" << endl;
+  cout << "Первая дата (Отдельные вызовы get методов): " << firstDate.getDay() << " / " << firstDate.getMonth() << " / "
+       << firstDate.getYear() << endl;
+  firstDate.printDate();
+  secondDate.printDate();
+  thirdDate.printDate();
+}
+
+int main()
+{
+  int userChoice;
+  cout << "Выберите задание:"
+          "\n1 - Банкноты"
+          "\n2 - Даты"
+       << endl;
+  cin >> userChoice;
+  switch (userChoice)
+  {
+  case 1:
+    taskOne();
+    break;
+  case 2:
+    taskTwo();
+    break;
+  default:
+    cout << "Выбранного задания нет" << endl;
+  }
 }
