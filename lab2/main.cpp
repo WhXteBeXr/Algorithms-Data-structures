@@ -22,6 +22,7 @@ vector<int> userVectorInput()
 {
   int vectorLength;
   vector<int> userVector;
+
   cout << endl << "Введите длину массива: ";
   cin >> vectorLength;
   cout << endl;
@@ -40,8 +41,6 @@ vector<int> userVectorInput()
 bool containsDigitThree(int number)
 {
   number = abs(number);
-  if (number < 0)
-    return false;
 
   while (number > 0)
   {
@@ -75,11 +74,10 @@ void taskOneUserInput()
   const vector<int> userVector = userVectorInput();
   vector<int> clearVector;
 
+  // Убираем полные квадраты
   for (const int& number : userVector)
-  {
     if (!isFullSquare(number))
       clearVector.push_back(number);
-  }
 
   // Вывод всех массивов
   cout << endl << "Исходный массив: ";
@@ -93,7 +91,6 @@ void taskOneUserInput()
   cout << endl << "Сумма массива убранных квадратов: " << accumulate(clearVector.begin(), clearVector.end(), 0) << endl;
 }
 
-
 void taskTwoTriplets()
 {
   unsigned int tripletsCount = 0;
@@ -103,7 +100,7 @@ void taskTwoTriplets()
   cout << endl;
   for (size_t i = 0; i < userVector.size() - 2; i++)
   {
-    cout << "Рассмотриваемая тройка: " << userVector[i] << " " << userVector[i + 1] << " " << userVector[i + 2] << endl;
+    cout << "Рассматриваемая тройка: " << userVector[i] << " " << userVector[i + 1] << " " << userVector[i + 2] << endl;
     if (containsDigitThree(userVector[i]) and containsDigitThree(userVector[i + 1]) and
         containsDigitThree(userVector[i + 2]))
     {
