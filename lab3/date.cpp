@@ -123,7 +123,7 @@ void Date::isThisALeapYear() const
 void Date::addFiveDays()
 {
   cout << "Текущий день: " << day <<  endl;
-  if (day <= 31)
+  if (day <= 26) // Нет проверки для месяцев с меньшим колчиством дней
   {
     day += 5;
     cout << "День после изменения: " << day << endl;
