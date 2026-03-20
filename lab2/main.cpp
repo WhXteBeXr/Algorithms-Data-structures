@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <numeric>
 #include <vector>
 
 using namespace std;
@@ -88,6 +89,8 @@ void taskOneUserInput()
   cout << endl << "Массив убранных полных квадратов: ";
   for (const int& clearNumber : clearVector)
     cout << clearNumber << " ";
+
+  cout << endl << "Сумма массива убранных квадратов: " << accumulate(clearVector.begin(), clearVector.end(), 0) << endl;
 }
 
 
@@ -97,13 +100,14 @@ void taskTwoTriplets()
   int minSum = numeric_limits<int>::max();
   const vector<int> userVector = userVectorInput();
 
+  cout << endl;
   for (size_t i = 0; i < userVector.size() - 2; i++)
   {
-    cout << endl << userVector[i] << " " << userVector[i + 1] << " " << userVector[i + 2] << endl;
+    cout << "Рассмотриваемая тройка: " << userVector[i] << " " << userVector[i + 1] << " " << userVector[i + 2] << endl;
     if (containsDigitThree(userVector[i]) and containsDigitThree(userVector[i + 1]) and
         containsDigitThree(userVector[i + 2]))
     {
-      // Тестовый набор 3 13 31 23 1
+      // Тестовый набор 3 13 31 23 1 / 23 13 31 3 51
       if (int tripletsSum = userVector[i] + userVector[i + 1] + userVector[i + 2]; isPrime(tripletsSum))
       {
         tripletsCount++;
