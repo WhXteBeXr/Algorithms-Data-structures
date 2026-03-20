@@ -43,10 +43,12 @@ void taskTwo()
 
   cout << "\n--- Замена значений на новые ---" << endl;
   firstDate.setDay(100);
-  firstDate.setDay(6);
+  firstDate.setDay(1);
   firstDate.setMonth("Март");
   firstDate.setYear(1001);
   firstDate.setYear(2006);
+  firstDate.addFiveDays();
+  firstDate.isThisALeapYear();
 
   cout << "\n--- Вывод всех дат ---" << endl;
   cout << "Первая дата (Отдельные вызовы get методов): " << firstDate.getDay() << " / " << firstDate.getMonth() << " / "

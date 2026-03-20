@@ -111,3 +111,24 @@ void Date::printDate() const
 {
   cout << "Дата: " << day << " / " << month << " / " << year << endl;
 }
+
+void Date::isThisALeapYear() const
+{
+  if ((year % 4 == 0) and (year % 100 != 0))
+    cout << year << " год является високосным" << endl;
+  else
+    cout << year << " не является високосным" << endl;
+}
+
+void Date::addFiveDays()
+{
+  cout << "Текущий день: " << day <<  endl;
+  if (day <= 31)
+  {
+    day += 5;
+    cout << "День после изменения: " << day << endl;
+  }
+
+  else
+    cout << "День не может быть больше 31";
+}

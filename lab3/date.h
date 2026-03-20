@@ -32,4 +32,6 @@ class Date
   void printMonth() const;
   void printYear() const;
   void printDate() const;
+  void isThisALeapYear() const;
+  void addFiveDays();
 };
