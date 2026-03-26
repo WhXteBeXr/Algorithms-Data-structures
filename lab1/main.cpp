@@ -1,8 +1,10 @@
 #include <algorithm>
-#include <cctype>
+
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -14,7 +16,7 @@ void taskOne()
   // Проверяем открыт ли файл
   if (!file.is_open())
   {
-    cout << "Ошибка открытия файла" << endl;
+    cerr << "Ошибка открытия файла" << endl;
     exit(1);
   }
 
@@ -43,7 +45,7 @@ void taskTwo()
 
   if (!fileA.is_open() || !fileB.is_open())
   {
-    cout << "Ошибка открытия одного из файлов" << endl;
+    cerr << "Ошибка открытия одного из файлов" << endl;
     exit(1);
   }
 
@@ -70,7 +72,7 @@ void taskThree()
 
   if (!lowercase.is_open() || !uppercase.is_open())
   {
-    cout << "Ошибка открытия одного из файлов" << endl;
+    cerr << "Ошибка открытия одного из файлов" << endl;
     exit(1);
   }
 
@@ -96,7 +98,7 @@ void taskFour()
 
   if (!input.is_open() || !even.is_open() || !odd.is_open())
   {
-    cout << "Ошибка открытия одного из файлов" << endl;
+    cerr << "Ошибка открытия одного из файлов" << endl;
     exit(1);
   }
 
@@ -118,6 +120,85 @@ void taskFour()
   odd.close();
 }
 
+void taskFive()
+{
+  struct BirthDate
+  {
+    int year{}, month{}, day{};
+  };
+
+  struct Person
+  {
+    string surname, name, patronymic;
+    string gender;
+    string nationality;
+    double height{}, weight{};
+    BirthDate birthDate;
+    string phoneNumber;
+    string address;
+  };
+
+  ifstream personsInput("../lab1/testFiles/tFive/personInput.txt");
+
+  if (!personsInput.is_open())
+  {
+    cout << "Ошибка открытия файла" << endl;
+    exit(1);
+  }
+
+  vector<Person> allPersons;
+  string currentLine;
+
+  while (getline(personsInput, currentLine)) // Читаем целую строку
+  {
+    if (currentLine.empty()) // Идем дальше если пустая
+      continue;
+
+    Person currentPerson; // Создаем структуру
+    istringstream iss(currentLine); // И создаем поток для чтения из строки
+    if (!(iss >> currentPerson.surname >> currentPerson.name >> currentPerson.patronymic >> currentPerson.gender >>
+          currentPerson.nationality >> currentPerson.height >> currentPerson.weight >> currentPerson.birthDate.year >>
+          currentPerson.birthDate.month >> currentPerson.birthDate.day >> currentPerson.phoneNumber))
+    {
+      // Если в каком-то моменте не получится прочитать часть строки - будет ошибка
+      cerr << "Ошибка чтения строки: " << currentLine << endl;
+      continue;
+    }
+
+    // Читаем остаток строки и помещаем его в адрес
+    getline(iss >> ws, currentPerson.address);
+    allPersons.push_back(currentPerson);
+  }
+  personsInput.close();
+  Person youngestPerson = allPersons[0];
+
+  // Ищем самого старшего
+  for (const Person& person : allPersons)
+  {
+    if (person.birthDate.year > youngestPerson.birthDate.year)
+      youngestPerson = person;
+    else if (person.birthDate.year == youngestPerson.birthDate.year)
+    {
+      if (person.birthDate.month > youngestPerson.birthDate.month)
+      {
+        youngestPerson = person;
+      }
+      else if (person.birthDate.month == youngestPerson.birthDate.month)
+      {
+        if (person.birthDate.day > youngestPerson.birthDate.day)
+          youngestPerson = person;
+      }
+    }
+  }
+
+  cout << "Информация о самом молодом человеке: " << youngestPerson.surname << " " << youngestPerson.name << " "
+       << youngestPerson.patronymic << " " << youngestPerson.gender << " " << youngestPerson.nationality
+       << " Рост: " << youngestPerson.height << " Вес: " << youngestPerson.weight
+       << " Дата рождения: " << youngestPerson.birthDate.day << "/" << youngestPerson.birthDate.month << "/"
+       << youngestPerson.birthDate.year << " Номер телефона: " << youngestPerson.phoneNumber
+       << " Адрес: " << youngestPerson.address << endl;
+}
+
 int main()
 {
   unsigned int userChoice;
@@ -126,7 +207,7 @@ int main()
           "\n2 - Сумма чисел файлов"
           "\n3 - Строчные в прописные"
           "\n4 - Позиции чисел"
-          "\n5 -"
+          "\n5 - Самый молодой"
        << endl;
   cin >> userChoice;
   cout << endl;
@@ -146,6 +227,7 @@ int main()
     taskFour();
     break;
   case 5:
+    taskFive();
     break;
   case 6:
     break;
