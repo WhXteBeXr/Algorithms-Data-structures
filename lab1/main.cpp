@@ -57,6 +57,9 @@ void taskTwo()
   while (fileB >> currentNum)
     filesSum += currentNum;
 
+  fileA.close();
+  fileB.close();
+
   cout << "Сумма файлов A & B: " << filesSum << endl;
 }
 
@@ -79,6 +82,40 @@ void taskThree()
     ranges::transform(currentString, currentString.begin(), ::toupper);
     uppercase << currentString << " ";
   }
+
+  cout << "Символы записаны в файл" << endl;
+  lowercase.close();
+  uppercase.close();
+}
+
+void taskFour()
+{
+  ifstream input("../lab1/testFiles/tFour/input.txt");
+  ofstream even("../lab1/testFiles/tFour/even.txt");
+  ofstream odd("../lab1/testFiles/tFour/odd.txt");
+
+  if (!input.is_open() || !even.is_open() || !odd.is_open())
+  {
+    cout << "Ошибка открытия одного из файлов" << endl;
+    exit(1);
+  }
+
+  int currentNum;
+  unsigned int currentPosition = 1;
+
+  while (input >> currentNum)
+  {
+    if (currentPosition % 2 == 0)
+      even << currentNum << " ";
+    else
+      odd << currentNum << " ";
+    currentPosition++;
+  }
+
+  cout << "Числа записаны в файлы" << endl;
+  input.close();
+  even.close();
+  odd.close();
 }
 
 int main()
@@ -88,6 +125,8 @@ int main()
           "\n1 - Положительные и отрицательные"
           "\n2 - Сумма чисел файлов"
           "\n3 - Строчные в прописные"
+          "\n4 - Позиции чисел"
+          "\n5 -"
        << endl;
   cin >> userChoice;
   cout << endl;
@@ -104,6 +143,7 @@ int main()
     taskThree();
     break;
   case 4:
+    taskFour();
     break;
   case 5:
     break;
