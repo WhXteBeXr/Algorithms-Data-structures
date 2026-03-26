@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <cctype>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -42,6 +44,7 @@ void taskTwo()
   if (!fileA.is_open() || !fileB.is_open())
   {
     cout << "Ошибка открытия одного из файлов" << endl;
+    exit(1);
   }
 
   double currentNum;
@@ -57,12 +60,35 @@ void taskTwo()
   cout << "Сумма файлов A & B: " << filesSum << endl;
 }
 
+void taskThree()
+{
+  ifstream lowercase("../lab1/testFiles/tThree/lowercase.txt");
+  ofstream uppercase("../lab1/testFiles/tThree/uppercase.txt");
+
+  if (!lowercase.is_open() || !uppercase.is_open())
+  {
+    cout << "Ошибка открытия одного из файлов" << endl;
+    exit(1);
+  }
+
+  string currentString;
+  while (lowercase >> currentString)
+  {
+    // Проходим с помощью итераторов от начала до конца строки и применяем toupper,
+    // получая результат обратно в currentString
+    ranges::transform(currentString, currentString.begin(), ::toupper);
+    uppercase << currentString << " ";
+  }
+}
+
 int main()
 {
   unsigned int userChoice;
   cout << "Выберите задание: "
           "\n1 - Положительные и отрицательные"
-          "\n2 - Сумма чисел файлов" << endl;
+          "\n2 - Сумма чисел файлов"
+          "\n3 - Строчные в прописные"
+       << endl;
   cin >> userChoice;
   cout << endl;
 
@@ -75,7 +101,23 @@ int main()
     taskTwo();
     break;
   case 3:
+    taskThree();
     break;
+  case 4:
+    break;
+  case 5:
+    break;
+  case 6:
+    break;
+  case 7:
+    break;
+  case 8:
+    break;
+  case 9:
+    break;
+  case 10:
+    break;
+
   default:
     cout << "Выбранного задания нет в списке";
   }
