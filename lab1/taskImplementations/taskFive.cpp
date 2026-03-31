@@ -38,7 +38,7 @@ void taskFive()
 
   if (!personsInput.is_open())
   {
-    cout << "Ошибка открытия файла" << endl;
+    cerr << "Ошибка открытия файла" << endl;
     exit(1);
   }
 
