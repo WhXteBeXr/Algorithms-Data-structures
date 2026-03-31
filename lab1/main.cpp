@@ -170,11 +170,18 @@ void taskFive()
     allPersons.push_back(currentPerson);
   }
   personsInput.close();
-  Person youngestPerson = allPersons[0];
 
-  // Ищем самого старшего
+  Person youngestPerson = allPersons[0]; // Создаем копию первого человека для дальнейшего сравнения
+
+  // Ищем самого младшего и выводим список всех
+  cout << "Информация всех людей из файла:" << endl;
   for (const Person& person : allPersons)
   {
+    cout << person.surname << " " << person.name << " " << person.patronymic << " " << person.gender << " "
+         << person.nationality << " Рост: " << person.height << " Вес: " << person.weight
+         << " Дата рождения: " << person.birthDate.day << "/" << person.birthDate.month << "/" << person.birthDate.year
+         << " Номер телефона: " << person.phoneNumber << " Адрес: " << person.address << endl;
+
     if (person.birthDate.year > youngestPerson.birthDate.year)
       youngestPerson = person;
     else if (person.birthDate.year == youngestPerson.birthDate.year)
@@ -191,7 +198,8 @@ void taskFive()
     }
   }
 
-  cout << "Информация о самом молодом человеке: " << youngestPerson.surname << " " << youngestPerson.name << " "
+  cout << endl
+       << "Информация о самом молодом человеке:\n" << youngestPerson.surname << " " << youngestPerson.name << " "
        << youngestPerson.patronymic << " " << youngestPerson.gender << " " << youngestPerson.nationality
        << " Рост: " << youngestPerson.height << " Вес: " << youngestPerson.weight
        << " Дата рождения: " << youngestPerson.birthDate.day << "/" << youngestPerson.birthDate.month << "/"
@@ -243,4 +251,5 @@ int main()
   default:
     cout << "Выбранного задания нет в списке";
   }
+  return 0;
 }
