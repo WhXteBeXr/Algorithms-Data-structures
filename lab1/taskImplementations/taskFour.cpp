@@ -32,7 +32,7 @@ void taskFour()
     currentPosition++;
   }
 
-  cout << "Числа записаны в файлы" << endl;
+  cout << "Числа записаны в файлы even.txt и odd.txt" << endl;
   input.close();
   even.close();
   odd.close();
