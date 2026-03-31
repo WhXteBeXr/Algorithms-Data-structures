@@ -78,4 +78,6 @@ int main()
   default:
     cout << "Выбранного задания нет" << endl;
   }
+
+  return 0;
 }
