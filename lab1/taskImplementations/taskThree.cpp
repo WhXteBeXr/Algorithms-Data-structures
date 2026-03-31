@@ -29,7 +29,7 @@ void taskThree()
     uppercase << currentString << " ";
   }
 
-  cout << "Символы записаны в файл" << endl;
+  cout << "Символы записаны в файл uppercase.txt" << endl;
   lowercase.close();
   uppercase.close();
 }
