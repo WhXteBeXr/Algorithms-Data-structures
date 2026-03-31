@@ -13,7 +13,14 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Общие файлы, которые могут использоваться всеми лабораторными
-set(GLOBAL_SOURCES)
+set(GLOBAL_SOURCES
+        lab1/taskImplementations/taskOne.cpp
+        lab1/taskImplementations/taskTwo.cpp
+        lab1/taskImplementations/taskThree.cpp
+        lab1/taskImplementations/taskFour.cpp
+        lab1/taskImplementations/TaskSix.cpp
+        lab1/taskImplementations/TaskFive.cpp
+        lab1/labFunctions.h)
 
 # Найти все main.cpp ровно на один уровень глубже корня
 file(GLOB LAB_SOURCES CONFIGURE_DEPENDS */main.cpp)
