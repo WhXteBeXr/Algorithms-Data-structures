@@ -1,0 +1,1 @@
+newWord abc test LoWeRCase UPPERCASE stringWithNumber16
