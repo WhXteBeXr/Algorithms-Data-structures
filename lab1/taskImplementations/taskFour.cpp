@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "../labFunctions.h"
+#include "../lab1Functions.h"
 
 using namespace std;
 

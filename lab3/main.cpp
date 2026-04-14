@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void taskOne()
+void vectorClassTask()
 {
   // Создание экземпляров класса
   cout << "\n--- Объявление и инициализация экземпляров класса ---" << endl;
@@ -69,7 +69,7 @@ int main()
   switch (userChoice)
   {
   case 1:
-    taskOne();
+    vectorClassTask();
     break;
   case 2:
     taskTwo();

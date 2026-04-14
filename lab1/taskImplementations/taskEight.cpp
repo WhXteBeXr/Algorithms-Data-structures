@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../labFunctions.h"
+#include "../lab1Functions.h"
 
 using namespace std;
 

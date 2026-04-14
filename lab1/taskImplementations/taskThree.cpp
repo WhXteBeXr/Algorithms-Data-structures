@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "../labFunctions.h"
+#include "../lab1Functions.h"
 
 /* Организовать текстовый файл. Заменить в файле все маленькие латинские буквы на большие.
  * (Создавая новый дополнительный файл) */
