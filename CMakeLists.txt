@@ -20,11 +20,12 @@ set(GLOBAL_SOURCES
         lab1/taskImplementations/taskFour.cpp
         lab1/taskImplementations/taskSix.cpp
         lab1/taskImplementations/taskFive.cpp
-        lab1/labFunctions.h
+        lab1/lab1Functions.h
         lab1/taskImplementations/taskSeven.cpp
         lab1/taskImplementations/taskEight.cpp
         lab1/taskImplementations/taskNine.cpp
-        lab1/taskImplementations/taskTen.cpp)
+        lab4/tasksClasses/IntVector.h
+        lab4/tasksClasses/IntVector.cpp)
 
 # Найти все main.cpp ровно на один уровень глубже корня
 file(GLOB LAB_SOURCES CONFIGURE_DEPENDS */main.cpp)
