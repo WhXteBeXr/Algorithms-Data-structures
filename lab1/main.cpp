@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "labFunctions.h"
+#include "./lab1Functions.h"
 
 using namespace std;
 
@@ -26,7 +26,7 @@ int main()
   switch (userChoice)
   {
   case 1:
-    taskOne();
+    vectorClassTask();
     break;
   case 2:
     taskTwo();
