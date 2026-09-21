@@ -12,7 +12,9 @@ endif()
 # Общие флаги компиляции для всех лаб — задаём один раз через функцию/переменную
 set(COMMON_WARNINGS -Wall -Wextra -Wpedantic)
 
-add_subdirectory(lab1)
-add_subdirectory(lab2)
-add_subdirectory(lab3)
-add_subdirectory(lab4)
+add_subdirectory(course-1/lab1)
+add_subdirectory(course-1/lab2)
+add_subdirectory(course-1/lab3)
+add_subdirectory(course-1/lab4)
+add_subdirectory(course-1/lab5)
+add_subdirectory(course-2/lab1)
