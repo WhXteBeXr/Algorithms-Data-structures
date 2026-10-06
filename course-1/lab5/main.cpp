@@ -1,160 +1,148 @@
-#include <cmath>
-#include <iomanip>
-#include <iostream>
-#include <stdexcept>
-#include "Complex.h"
-#include "Polynomial.h"
+#include <sstream>
+#include "SparseMatrix.h"
 
 int main()
 {
-  std::cout << std::fixed << std::setprecision(4);
+  // 1. Создание матриц и заполнение (хранятся только ненулевые элементы)
+  std::cout << "1. Матрицы A и B (3x3):\n";
+  SparseMatrix a(3, 3), b(3, 3);
+  a.set(0, 0, 1);
+  a.set(1, 2, 2);
+  a.set(2, 1, 3);
+  b.set(0, 1, 4);
+  b.set(1, 2, 5);
+  b.set(2, 0, 6);
+  std::cout << "A (ненулевых: " << a.getSize() << "):\n" << a;
+  std::cout << "B (ненулевых: " << b.getSize() << "):\n" << b << "\n";
 
-  const double PI = std::acos(-1.0);
-  Complex a(1, 1), b(3, 4);
+  // 2. Арифметические операторы
+  std::cout << "2. Арифметика:\nA + B:\n" << a + b;
+  std::cout << "A - B:\n" << a - b;
+  std::cout << "A * B (матричное):\n" << a * b;
+  std::cout << "A / 2:\n" << a / 2 << "\n";
 
-  std::cout << "a = " << a << ", b = " << b << std::endl;
-  std::cout << "arg(a) = " << a.argument() << " (pi/4 = " << PI / 4 << ")" << std::endl;
+  // 3. Дружественные функции: матрица * число и число * матрица
+  std::cout << "3. Умножение на число:\nA * 3:\n" << a * 3;
+  std::cout << "0.5 * B:\n" << 0.5 * b << "\n";
 
-  a += b;
-  std::cout << "a += b -> " << a << std::endl;
-  a -= b;
-  std::cout << "a -= b -> " << a << std::endl;
-  a *= b;
-  std::cout << "a *= b -> " << a << std::endl;
-  a /= b;
-  std::cout << "a /= b -> " << a << std::endl;
+  // 4. Составное присваивание
+  std::cout << "4. Составное присваивание:\n";
+  SparseMatrix c = a;
+  c += b;
+  std::cout << "C = A; C += B:\n" << c;
+  c -= b;
+  std::cout << "C -= B:\n" << c;
+  c *= 2;
+  std::cout << "C *= 2:\n" << c;
+  c /= 2;
+  std::cout << "C /= 2:\n" << c << "\n";
 
-  std::cout << "a < b? " << (a < b ? "да" : "нет") << std::endl;
-  std::cout << "a > b? " << (a > b ? "да" : "нет") << std::endl;
-  std::cout << "a <= b? " << (a <= b ? "да" : "нет") << std::endl;
-  std::cout << "a >= b? " << (a >= b ? "да" : "нет") << std::endl;
+  // 5. Сравнение
+  std::cout << "5. Сравнение:\n";
+  std::cout << "C == A? " << (c == a ? "да" : "нет") << "\n";
+  std::cout << "A != B? " << (a != b ? "да" : "нет") << "\n";
+  std::cout << "норма A = " << a.norm() << ", норма B = " << b.norm() << "\n";
+  std::cout << "A < B? " << (a < b ? "да" : "нет") << ", A >= B? " << (a >= b ? "да" : "нет") << "\n\n";
 
-  std::cout << "++a = " << ++a << std::endl;
-  std::cout << "a++ = " << a++ << ", теперь a = " << a << std::endl;
-  std::cout << "--a = " << --a << std::endl;
-  std::cout << "a-- = " << a-- << ", теперь a = " << a << std::endl;
+  // 6. Инкремент и декремент (прибавление / вычитание единичной матрицы)
+  std::cout << "6. ++ и --:\n";
+  SparseMatrix d = a;
+  ++d;
+  std::cout << "++D:\n" << d;
+  SparseMatrix old = d++;
+  std::cout << "D++ вернул (старое значение):\n" << old << "D после D++:\n" << d;
+  --d;
+  --d;
+  std::cout << "D после двух --:\n" << d << "\n";
 
-  Complex z(0, 2);
-  std::cout << "z = " << z << ", z(pi/2) = " << z(PI / 2) << std::endl;
+  // 7. Функтор, индексация, преобразования типов
+  std::cout << "7. (), [], преобразования:\n";
+  std::cout << "A(1, 2) = " << a(1, 2) << ", A(0, 1) = " << a(0, 1) << "\n";
+  std::cout << "A[0] (первый хранимый элемент) = " << a[0] << "\n";
+  std::cout << "double(A) = " << static_cast<double>(a) << "\n";
+  SparseMatrix zero(3, 3);
+  std::cout << "Нулевая матрица содержит элементы? " << (static_cast<bool>(zero) ? "да" : "нет") << "\n\n";
+
+  // 8. Ввод матрицы из потока (формат: строки столбцы k, затем k троек)
+  std::cout << "8. Ввод матрицы:\n";
+  std::istringstream in("2 2 2   0 0 5   1 1 7");
+  SparseMatrix e;
+  in >> e;
+  std::cout << "Прочитана матрица:\n" << e << "\n";
+
+  // 9. Глубокое копирование
+  std::cout << "9. Глубокое копирование:\n";
+  SparseMatrix f = a;
+  f.set(0, 0, 100);
+  std::cout << "A(0,0) = " << a(0, 0) << ", F(0,0) = " << f(0, 0) << "\n\n";
+
+  // 10. Исключения
+  std::cout << "10. Исключения:\n";
+  try
+  {
+    SparseMatrix bad(-1, 2);
+  }
+  catch (const std::invalid_argument& ex)
+  {
+    std::cout << "Ошибка: " << ex.what() << "\n";
+  }
 
   try
   {
-    Complex zero;
-    std::cout << zero.argument() << std::endl;
+    a(5, 5);
   }
-  catch (const std::exception& ex)
+  catch (const std::out_of_range& ex)
   {
-    std::cout << "Ошибка: " << ex.what() << std::endl;
+    std::cout << "Ошибка: " << ex.what() << "\n";
   }
-
-  std::cout << "\n--------------------\n" << std::endl;
-
-  double ca[] = {1, -3, 2}; // 2x^2 - 3x + 1
-  double cb[] = {-1, 1}; // x - 1
-  Polynomial p(ca, 2);
-  Polynomial q(cb, 1);
-  Polynomial copy(p);
-  Polynomial zero;
-
-  std::cout << "p = " << p << std::endl;
-  std::cout << "q = " << q << std::endl;
-  std::cout << "copy = " << copy << ", zero = " << zero << std::endl;
-  std::cout << "degree(p) = " << p.getDegree() << std::endl;
-
-  std::cout << "p + q = " << p + q << std::endl;
-  std::cout << "p - q = " << p - q << std::endl;
-  std::cout << "p * q = " << p * q << std::endl;
-  std::cout << "p / q = " << p / q << std::endl;
-  std::cout << "p % q = " << p % q << std::endl;
-
-  Polynomial t = p;
-  t += q;
-  std::cout << "p += q -> " << t << std::endl;
-  t = p;
-  t -= q;
-  std::cout << "p -= q -> " << t << std::endl;
-  t = p;
-  t *= q;
-  std::cout << "p *= q -> " << t << std::endl;
-  t = p;
-  t /= q;
-  std::cout << "p /= q -> " << t << std::endl;
-
-  std::cout << "p == copy? " << (p == copy ? "да" : "нет") << std::endl;
-  std::cout << "p != q? " << (p != q ? "да" : "нет") << std::endl;
-  std::cout << "p < q? " << (p < q ? "да" : "нет") << std::endl;
-  std::cout << "p > q? " << (p > q ? "да" : "нет") << std::endl;
-  std::cout << "p <= q? " << (p <= q ? "да" : "нет") << std::endl;
-  std::cout << "p >= q? " << (p >= q ? "да" : "нет") << std::endl;
-
-  t = p;
-  ++t;
-  std::cout << "++p = " << t << std::endl;
-  Polynomial old = t++;
-  std::cout << "p++ вернул " << old << ", теперь " << t << std::endl;
-  --t;
-  std::cout << "--p = " << t << std::endl;
-  old = t--;
-  std::cout << "p-- вернул " << old << ", теперь " << t << std::endl;
-
-  std::cout << "p(2) = " << p(2) << std::endl;
-  std::cout << "p[1] = " << p[1] << std::endl;
-  t = p;
-  t[1] = -5;
-  t.setCoefficient(0, 7);
-  std::cout << "после записи через [] и setCoefficient: " << t << std::endl;
-
-  std::cout << "p' = " << p.derivative() << std::endl;
-  std::cout << "интеграл p (C = 0) = " << p.integral() << std::endl;
-  std::cout << "интеграл p (C = 5) = " << p.integral(5) << std::endl;
-  std::cout << "интеграл p от 0 до 1 = " << p.definiteIntegral(0, 1) << std::endl;
-
-  Polynomial c(5.0);
-  std::cout << "double(c) = " << static_cast<double>(c) << std::endl;
-  std::cout << "bool(p) = " << static_cast<bool>(p) << ", bool(zero) = " << static_cast<bool>(zero) << std::endl;
-
-  std::cout << "2 * p = " << 2.0 * p << std::endl;
-  std::cout << "p * 0.5 = " << p * 0.5 << std::endl;
-  std::cout << "1 + p = " << 1.0 + p << std::endl;
-  std::cout << "10 - p = " << 10.0 - p << std::endl;
-  std::cout << "p + 3 = " << p + 3.0 << std::endl;
-
-  Polynomial r;
-  std::cout << "Введите степень и коэффициенты a0..an: ";
-  std::cin >> r;
-  std::cout << "Вы ввели: " << r << std::endl;
 
   try
   {
-    std::cout << p / zero << std::endl;
+    SparseMatrix s(2, 2);
+    SparseMatrix r = a + s;
   }
-  catch (const std::exception& ex)
+  catch (const std::invalid_argument& ex)
   {
-    std::cout << "Ошибка: " << ex.what() << std::endl;
+    std::cout << "Ошибка: " << ex.what() << "\n";
   }
+
   try
   {
-    std::cout << p[10] << std::endl;
+    SparseMatrix s(2, 3);
+    SparseMatrix r = s * s;
   }
-  catch (const std::exception& ex)
+  catch (const std::invalid_argument& ex)
   {
-    std::cout << "Ошибка: " << ex.what() << std::endl;
+    std::cout << "Ошибка: " << ex.what() << "\n";
   }
+
   try
   {
-    std::cout << static_cast<double>(p) << std::endl;
+    SparseMatrix r = a / 0;
   }
-  catch (const std::exception& ex)
+  catch (const std::invalid_argument& ex)
   {
-    std::cout << "Ошибка: " << ex.what() << std::endl;
+    std::cout << "Ошибка: " << ex.what() << "\n";
   }
+
   try
   {
-    Polynomial bad(nullptr, 2);
+    SparseMatrix s(2, 3);
+    ++s;
   }
-  catch (const std::exception& ex)
+  catch (const std::invalid_argument& ex)
   {
-    std::cout << "Ошибка: " << ex.what() << std::endl;
+    std::cout << "Ошибка: " << ex.what() << "\n";
   }
+
+  try
+  {
+    std::cout << a[100];
+  }
+  catch (const std::out_of_range& ex)
+  {
+    std::cout << "Ошибка: " << ex.what() << "\n";
+  }
+
   return 0;
 }
