@@ -71,7 +71,7 @@ bool SparseMatrix::elementsEqualIn(const SparseMatrix& o) const
 
 SparseMatrix::SparseMatrix() : SparseMatrix(0, 0) {}
 
-SparseMatrix::SparseMatrix(int r, int c) :
+SparseMatrix::SparseMatrix(const int r, const int c) :
     values(nullptr), rows(nullptr), cols(nullptr), size(0), rowCount(r), colCount(c)
 {
   if (r < 0 || c < 0)
@@ -221,7 +221,7 @@ SparseMatrix SparseMatrix::operator*(const SparseMatrix& o) const
 }
 
 // Деление матрицы на число
-SparseMatrix SparseMatrix::operator/(double k) const
+SparseMatrix SparseMatrix::operator/(const double k) const
 {
   if (k == 0)
   {
