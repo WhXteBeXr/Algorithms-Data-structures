@@ -2,36 +2,37 @@
 #include <iostream>
 #include <stdexcept>
 
-class IntVector {
-private:
-  int* data;      // указатель на динамический массив
-  int size;       // текущее количество элементов
-  int capacity;   // вместимость (сколько элементов влезет без перевыделения)
+class IntVector
+{
+  private:
+  int* data; // указатель на динамический массив
+  int size; // текущее количество элементов
+  int capacity; // вместимость (сколько элементов влезет без перевыделения)
 
-  void reallocate(int newCapacity);   // вспомогательный: перевыделить память
+  void reallocate(int newCapacity); // вспомогательный: перевыделить память
 
-public:
+  public:
   // Конструкторы
-  IntVector();                              // по умолчанию
-  explicit IntVector(int n);                // размера n (нули)
-  IntVector(int n, int value);              // размера n, заполненный value
-  IntVector(const IntVector& other);        // копирования
-  IntVector(IntVector&& other) noexcept;    // перемещения
+  IntVector(); // по умолчанию
+  explicit IntVector(int n); // размера n (нули)
+  IntVector(int n, int value); // размера n, заполненный value
+  IntVector(const IntVector& other); // копирования
+  IntVector(IntVector&& other) noexcept; // перемещения
 
   // Деструктор
   ~IntVector();
 
   // Операторы присваивания
-  IntVector& operator=(const IntVector& other);       // копированием
-  IntVector& operator=(IntVector&& other) noexcept;   // перемещением
+  IntVector& operator=(const IntVector& other); // копированием
+  IntVector& operator=(IntVector&& other) noexcept; // перемещением
 
   // Доступ по индексу
   int& operator[](int index);
   const int& operator[](int index) const;
 
   // Операторы варианта 3
-  IntVector operator+(const IntVector& other) const;  // конкатенация
-  IntVector operator*(int k) const;                   // умножение на число
+  IntVector operator+(const IntVector& other) const; // конкатенация
+  IntVector operator*(int k) const; // умножение на число
 
   // Методы доступа
   int getSize() const;

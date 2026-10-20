@@ -123,7 +123,7 @@ IntVector IntVector::operator+(const IntVector& other) const
 }
 
 // Умножение на число: каждый элемент копии умножаем на k
-IntVector IntVector::operator*(int k) const
+IntVector IntVector::operator*(const int k) const
 {
   IntVector result(*this);
   for (int i = 0; i < result.size; ++i)
@@ -133,8 +133,8 @@ IntVector IntVector::operator*(int k) const
   return result;
 }
 
-// k * v — то же самое, что v * k
-IntVector operator*(int k, const IntVector& v) { return v * k; }
+// k * v - то же самое, что v * k
+IntVector operator*(const int k, const IntVector& v) { return v * k; }
 
 int IntVector::getSize() const { return size; }
 int IntVector::getCapacity() const { return capacity; }
@@ -144,7 +144,7 @@ void IntVector::pushBack(const int value)
 {
   if (size >= capacity)
   {
-    // Удваиваем вместимость (для «пустого» вектора после перемещения — берём 1)
+    // Удваиваем вместимость (для «пустого» вектора после перемещения - берём 1)
     reallocate(capacity == 0 ? 1 : capacity * 2);
   }
   data[size] = value;
