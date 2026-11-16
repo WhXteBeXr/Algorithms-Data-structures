@@ -1,0 +1,40 @@
+=== Часть 1. Рекурсивные алгоритмы ===
+0!: recursion = 1, loop = 1
+1!: recursion = 1, loop = 1
+5!: recursion = 120, loop = 120
+20!: recursion = 2432902008176640000, loop = 2432902008176640000
+F(0): memo recursion = 0, loop = 0
+F(1): memo recursion = 1, loop = 1
+F(10): memo recursion = 55, loop = 55
+F(93): memo recursion = 12200160415121876738, loop = 12200160415121876738
+Строки ASCII, регистр и пробелы учитываются:
+"": reverse = "", palindrome = true
+"a": reverse = "a", palindrome = true
+"algorithm": reverse = "mhtirogla", palindrome = false
+"level": reverse = "level", palindrome = true
+"Level": reverse = "leveL", palindrome = false
+Отрицательный факториал: Аргумент не может быть отрицательным
+21!: Результат не помещается в uint64_t
+Отрицательный индекс Фибоначчи: Аргумент не может быть отрицательным
+F(94): Результат не помещается в uint64_t
+Текст UTF-8: Ожидается строка ASCII
+Слишком длинная строка: Допускается не более 4096 символов
+
+=== Часть 2. Простые сортировки ===
+Bubble: -3 -1 0 2 4 4, single = 42, empty: OK
+Insertion: -3 -1 0 2 4 4, single = 42, empty: OK
+Selection: -3 -1 0 2 4 4, single = 42, empty: OK
+
+=== Сравнение сортировок на обратном массиве ===
+Время в мкс, медиана 5 запусков. Для сравнения используйте Release.
+       N     Algorithm         time_us
+     100        Bubble            4.01
+     100     Insertion            3.83
+     100     Selection            4.40
+    1000        Bubble          332.13
+    1000     Insertion          169.26
+    1000     Selection          335.69
+    5000        Bubble         8263.19
+    5000     Insertion         4126.84
+    5000     Selection         7242.69
+Подготовка массива, проверка результата и вывод находятся вне замера.
