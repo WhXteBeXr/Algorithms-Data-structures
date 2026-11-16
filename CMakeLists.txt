@@ -9,7 +9,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-# Общие флаги компиляции для всех лаб — задаём один раз через функцию/переменную
+# Общие флаги компиляции для всех лаб - задаём один раз через функцию/переменную
 set(COMMON_WARNINGS -Wall -Wextra -Wpedantic)
 
 add_subdirectory(course-1/lab1)

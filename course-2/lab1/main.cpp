@@ -1,57 +1,97 @@
+#include "Company.h"
+#include "Employee.h"
+
+#include <iomanip>
 #include <iostream>
-#include "University.h"
-#include "Student.h"
+#include <limits>
+#include <stdexcept>
 
-int main() {
-  std::cout << "Студентов всего: " << Student::getTotalCount() << "\n\n";
-
-  // static + создан до getInstance(), поэтому уничтожится ПОСЛЕ университета
-  static Student persistent("Дмитрий", "Волков", "105");
-
-  University& uni = University::getInstance();
-  University& uni2 = University::getInstance();
-  uni.setName("БГУИР");
-  std::cout << "Одиночка: uni и uni2 - один объект? "
-            << (&uni == &uni2 ? "да" : "нет") << "\n\n";
-
-  Student s1("Иван", "Иванов", "101");
-  Student s2("Мария", "Петрова", "102");
-  Student s3("Пётр", "Сидоров", "101");
-
-  std::cout << "\n--- Зачисление ---\n";
-  uni.addStudent(&persistent);
-  uni.addStudent(&s1);
-  uni.addStudent(&s2);
-  uni.addStudent(&s3);
-  uni.print();
-
-  std::cout << "\n--- Граничные случаи ---\n";
-  uni.addStudent(nullptr);
-  uni.addStudent(&s1);
-  Student stranger("Анна", "Николаевна", "103");
-  uni.removeStudent(&stranger);
-
-  std::cout << "\n--- Отчисление ---\n";
-  uni.removeStudent(&s2);
-  uni.print();
-  std::cout << "Объектов Student: " << Student::getTotalCount()
-            << " (s2 отчислен, но продолжает существовать)\n";
-
-  std::cout << "\n--- Студент во вложенной области видимости ---\n";
+namespace
+{
+  void printStatistics()
   {
-    Student temp("Олег", "Кузнецов", "104");
-    uni.addStudent(&temp);
-    std::cout << "Объектов Student: " << Student::getTotalCount() << "\n";
-    // Иначе в векторе останется висячий указатель
-    uni.removeStudent(&temp);
+    // Данные принадлежат классу Employee и не зависят от существования Company.
+    std::cout << "Живых объектов Employee: " << Employee::getCount()
+              << ", средняя зарплата: " << Employee::getAverageSalary() << " руб.\n";
   }
-  std::cout << "Объектов Student: " << Student::getTotalCount() << "\n";
 
-  std::cout << "\n--- Отчисление остальных ---\n";
-  uni.removeStudent(&s1);
-  uni.removeStudent(&s3);
-  uni.print(); // остался только persistent
+  void demonstrateCompany()
+  {
+    // Локальные сотрудники существуют независимо от одиночки.
+    // При выходе из функции их деструкторы автоматически обновят статистику.
+    Employee developer("Иванов Иван", "Программист", 80000);
+    Employee tester("Петров Пётр", "Тестировщик", 60000);
 
-  std::cout << "\n--- Конец main ---\n";
-  return 0;
+    // Совпадение адресов показывает, что второй вызов не создаёт новую компанию.
+    Company* company = Company::getInstance();
+    std::cout << "Два вызова getInstance() вернули один объект: "
+              << (company == Company::getInstance()) << '\n';
+    std::cout << "Добавление Иванова: " << company->addEmployee(&developer) << '\n';
+    std::cout << "Добавление Петрова: " << company->addEmployee(&tester) << '\n';
+    std::cout << "Повторное добавление Петрова: " << company->addEmployee(&tester) << '\n';
+    std::cout << "Добавление nullptr: " << company->addEmployee(nullptr) << '\n';
+    company->print(std::cout);
+    printStatistics();
+
+    tester.setSalary(70000);
+    std::cout << "\nПосле повышения зарплаты Петрова:\n";
+    printStatistics();
+
+    // Ошибка оклада перехватывается, чтобы демонстрация продолжалась.
+    // Проверка предшествует изменению полей, поэтому среднее остаётся прежним.
+    for (double invalidSalary : {-1.0, std::numeric_limits<double>::quiet_NaN(),
+                                 std::numeric_limits<double>::infinity()})
+    {
+      try
+      {
+        tester.setSalary(invalidSalary);
+      }
+      catch (const std::invalid_argument& error)
+      {
+        std::cout << "Некорректная зарплата отклонена: " << error.what() << '\n';
+      }
+    }
+    printStatistics();
+
+    std::cout << "\nВременный сотрудник:\n";
+    {
+      Employee designer("Сидорова Мария", "Дизайнер", 65000);
+      company->addEmployee(&designer);
+      printStatistics();
+      // Агрегация не продлевает жизнь designer: сначала убираем его адрес.
+      std::cout << "Исключение Сидоровой: " << company->removeEmployee(&designer) << '\n';
+      std::cout << "Повторное исключение: " << company->removeEmployee(&designer) << '\n';
+      std::cout << "Исключение не уничтожило сотрудника: ";
+      printStatistics();
+    }
+    std::cout << "После выхода сотрудника из области видимости:\n";
+    printStatistics();
+    std::cout << "Исключение nullptr: " << company->removeEmployee(nullptr) << '\n';
+
+    std::cout << "\nЗакрываем компанию. Сотрудники продолжают существовать:\n";
+    Company::destroyInstance();
+    company = nullptr; // Старый адрес больше не указывает на существующую компанию.
+    developer.print(std::cout);
+    tester.print(std::cout);
+    printStatistics();
+
+    // У нового экземпляра пустой список, старые сотрудники ещё существуют.
+    Company* reopened = Company::getInstance();
+    std::cout << "\nВ повторно созданной компании сотрудников: " << reopened->getStaffCount() << '\n';
+    reopened->print(std::cout);
+    Company::destroyInstance();
+    Company::destroyInstance(); // Повторное закрытие пустого одиночки безопасно.
+  }
+}
+
+int main()
+{
+  // boolalpha печатает true/false, fixed и setprecision задают два знака после точки.
+  std::cout << std::boolalpha << std::fixed << std::setprecision(2);
+  std::cout << "До создания сотрудников:\n";
+  printStatistics();
+  demonstrateCompany();
+  // Функция завершилась, все её локальные сотрудники уже уничтожены.
+  std::cout << "\nПосле уничтожения всех сотрудников:\n";
+  printStatistics();
 }
