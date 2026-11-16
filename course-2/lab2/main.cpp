@@ -1,115 +1,110 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include "Vector.h"
 #include "Benchmark.h"
+#include "Stack.h"
 
-void demoBasicOperations() {
-    std::cout << "=== Демонстрация основных операций ===" << std::endl;
+#include <exception>
+#include <iostream>
+#include <stdexcept>
+#include <string>
 
-    Vector<int> v(2);
-    std::cout << "Создан Vector<int>, ёмкость: " << v.capacity()
-              << ", размер: " << v.size() << std::endl;
+namespace
+{
+  void printComplexity()
+  {
+    std::cout << "=== Сложность операций Stack<T> ===\n"
+              << "push: O(1) амортизированно, O(n) при расширении\n"
+              << "pop: O(1), top: O(1), isEmpty: O(1), size: O(1)\n"
+              << "Оценки даны при постоянной стоимости операций над T.\n\n";
+  }
 
-    for (int i = 1; i <= 6; ++i) {
-        v.push_back(i * 10);
-        std::cout << "push_back(" << i * 10 << ") -> размер: " << v.size()
-                   << ", ёмкость: " << v.capacity() << std::endl;
+  void demonstrateIntegers()
+  {
+    // Маленькая ёмкость заставляет стек расширяться уже в коротком примере.
+    Stack<int> numbers(2);
+    std::cout << "=== Stack<int>: рост и порядок LIFO ===\n";
+    std::cout << "До добавления: размер = " << numbers.size() << ", пуст = " << numbers.isEmpty() << '\n';
+    for (int value : {10, 20, 30, 40, 50})
+    {
+      numbers.push(value);
+      std::cout << "push(" << value << "): размер = " << numbers.size() << ", top = " << numbers.top() << '\n';
     }
 
-    std::cout << "\nСодержимое через operator[]: ";
-    for (std::size_t i = 0; i < v.size(); ++i) {
-        std::cout << v[i] << " ";
+    const Stack<int>& view = numbers;
+    std::cout << "top через const-ссылку: " << view.top() << ", размер = " << view.size() << '\n';
+    std::cout << "Извлечение в обратном порядке:";
+    while (!numbers.isEmpty())
+    {
+      std::cout << ' ' << numbers.pop();
     }
-    std::cout << std::endl;
+    std::cout << "\nПосле извлечения: размер = " << numbers.size() << ", пуст = " << numbers.isEmpty() << '\n';
+    numbers.push(99); // Освободившиеся ячейки можно использовать повторно.
+    std::cout << "Повторное использование: pop = " << numbers.pop() << '\n';
+  }
 
-    v.pop_back();
-    std::cout << "После pop_back(): размер " << v.size()
-              << ", последний элемент " << v[v.size() - 1] << std::endl;
+  void demonstrateOtherTypes()
+  {
+    std::cout << "\n=== Другие типы данных ===\n";
+    Stack<std::string> words(1);
+    words.push("один");
+    // Вершина находится в старом буфере. push сохраняет её до завершения расширения.
+    words.push(words.top());
+    std::cout << "push(top()) с расширением: top = " << words.top() << ", размер = " << words.size() << '\n';
+    words.push("два");
+    const auto lastWord = words.pop();
+    std::cout << "Stack<string>: pop = " << lastWord << ", следующая вершина = " << words.top() << '\n';
 
-    std::cout << "\n--- reserve() ---" << std::endl;
-    std::cout << "Ёмкость до reserve(100): " << v.capacity() << std::endl;
-    v.reserve(100);
-    std::cout << "Ёмкость после reserve(100): " << v.capacity()
-              << ", размер не изменился: " << v.size() << std::endl;
+    Stack<double> fractions;
+    fractions.push(1.5);
+    fractions.push(2.75);
+    std::cout << "Stack<double>: top = " << fractions.top();
+    const double lastFraction = fractions.pop();
+    std::cout << ", pop = " << lastFraction << ", размер = " << fractions.size() << '\n';
+  }
 
-    std::cout << "\n--- Работа с другим типом (string) ---" << std::endl;
-    Vector<std::string> words(2);
-    words.push_back("Привет");
-    words.push_back("мир");
-    for (std::size_t i = 0; i < words.size(); ++i) {
-        std::cout << words[i] << " ";
+  void demonstrateBoundaries()
+  {
+    std::cout << "\n=== Граничные случаи ===\n";
+    Stack<int> empty;
+    // Ошибки перехватываются отдельно, после каждой программа продолжает работу.
+    try
+    {
+      empty.pop();
     }
-    std::cout << std::endl;
+    catch (const std::out_of_range& error)
+    {
+      std::cout << "pop пустого стека: " << error.what() << '\n';
+    }
+    try
+    {
+      empty.top();
+    }
+    catch (const std::out_of_range& error)
+    {
+      std::cout << "top пустого стека: " << error.what() << '\n';
+    }
+    std::cout << "После ошибок: размер = " << empty.size() << ", пуст = " << empty.isEmpty() << '\n';
 
-    std::cout << "\n--- Граничные случаи ---" << std::endl;
-    Vector<int> empty(1);
-    try {
-        empty.pop_back();
-    } catch (const std::out_of_range& e) {
-        std::cout << "Поймано исключение: " << e.what() << std::endl;
-    }
-    try {
-        int x = empty[0];
-        (void)x;
-    } catch (const std::out_of_range& e) {
-        std::cout << "Поймано исключение: " << e.what() << std::endl;
-    }
+    Stack<int> tiny(0); // Нулевая ёмкость исправляется на единицу.
+    tiny.push(1);
+    tiny.push(2);
+    std::cout << "Начальная ёмкость 0, два push: размер = " << tiny.size() << ", top = " << tiny.top() << '\n';
+  }
 }
 
-void demoComplexity() {
-    std::cout << "\n=== Сложность операций Vector<T> ===" << std::endl;
-    std::cout << "push_back:  O(1) амортизированно, O(n) в момент расширения" << std::endl;
-    std::cout << "pop_back:   O(1)" << std::endl;
-    std::cout << "operator[]: O(1)" << std::endl;
-    std::cout << "size:       O(1)" << std::endl;
-    std::cout << "capacity:   O(1)" << std::endl;
-    std::cout << "reserve:    O(n) при увеличении ёмкости, иначе O(1)" << std::endl;
-}
-
-void compareWithSTL() {
-    std::cout << "\n=== Сравнение с std::vector (push_back без reserve) ===" << std::endl;
-    std::cout << "N\t\tVector<T>, мкс\tstd::vector, мкс" << std::endl;
-
-    std::vector<int> sizes = {10000, 100000, 500000, 1000000};
-
-    for (int n : sizes) {
-        long long myTime = measureTime([&]() {
-            Vector<int> v(1);
-            for (int i = 0; i < n; ++i) v.push_back(i);
-        });
-
-        long long stlTime = measureTime([&]() {
-            std::vector<int> v;
-            for (int i = 0; i < n; ++i) v.push_back(i);
-        });
-
-        std::cout << n << "\t\t" << myTime << "\t\t" << stlTime << std::endl;
-    }
-
-    std::cout << "\n=== То же самое, но с предварительным reserve(n) ===" << std::endl;
-    std::cout << "N\t\tVector<T>, мкс\tstd::vector, мкс" << std::endl;
-
-    for (int n : sizes) {
-        long long myTime = measureTime([&]() {
-            Vector<int> v(1);
-            v.reserve(n);
-            for (int i = 0; i < n; ++i) v.push_back(i);
-        });
-
-        long long stlTime = measureTime([&]() {
-            std::vector<int> v;
-            v.reserve(n);
-            for (int i = 0; i < n; ++i) v.push_back(i);
-        });
-
-        std::cout << n << "\t\t" << myTime << "\t\t" << stlTime << std::endl;
-    }
-}
-
-int main() {
-    demoBasicOperations();
-    demoComplexity();
-    compareWithSTL();
-    return 0;
+int main()
+{
+  std::cout << std::boolalpha;
+  try
+  {
+    printComplexity();
+    demonstrateIntegers();
+    demonstrateOtherTypes();
+    demonstrateBoundaries();
+    // Замеры отделены от демонстрационного вывода, чтобы печать не влияла на время.
+    runStackBenchmark(std::cout);
+  }
+  catch (const std::exception& error)
+  {
+    std::cerr << "Ошибка выполнения: " << error.what() << '\n';
+    return 1;
+  }
 }

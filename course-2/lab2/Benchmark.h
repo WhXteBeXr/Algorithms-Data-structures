@@ -1,12 +1,6 @@
 #pragma once
-#include <chrono>
 
-// Шаблонная функция измерения времени выполнения произвольного
-// вызываемого объекта (лямбды)
-template <typename Func>
-long long measureTime(Func func) {
-  auto start = std::chrono::high_resolution_clock::now();
-  func();
-  auto end = std::chrono::high_resolution_clock::now();
-  return std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-}
+#include <iosfwd>
+
+// Выполняет одинаковую серию push/pop для своего стека и двух STL-аналогов.
+void runStackBenchmark(std::ostream& out);
