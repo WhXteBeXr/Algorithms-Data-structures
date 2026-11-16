@@ -32,8 +32,9 @@
 *.out
 *.app
 
-### Example user template template
 ### Example user template
+*/lab*/defense.md
+AGENTS.md
 
 # IntelliJ project files
 .idea
