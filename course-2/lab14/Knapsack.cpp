@@ -1,0 +1,57 @@
+#include "Knapsack.h"
+
+#include <algorithm>
+#include <limits>
+#include <stdexcept>
+
+KnapsackResult solveKnapsack(std::span<const Item> items, int capacity)
+{
+  if (capacity < 0)
+  {
+    throw std::invalid_argument("Вместимость не может быть отрицательной");
+  }
+  for (const auto& item : items)
+  {
+    if (item.weight < 0)
+    {
+      throw std::invalid_argument("Вес предмета не может быть отрицательным");
+    }
+  }
+  const auto columns = static_cast<std::size_t>(capacity) + 1;
+  KnapsackResult result{0, {}, std::vector<std::vector<std::int64_t>>(
+    items.size() + 1, std::vector<std::int64_t>(columns, 0))};
+  auto& table = result.table;
+  for (std::size_t i = 1; i <= items.size(); ++i)
+  {
+    const auto weight = static_cast<std::size_t>(items[i - 1].weight);
+    const auto value = items[i - 1].value;
+    // Столбец 0 тоже вычисляется: предметы нулевого веса могут иметь ценность.
+    for (std::size_t w = 0; w < columns; ++w)
+    {
+      table[i][w] = table[i - 1][w]; // Сначала вариант без нового предмета.
+      if (weight <= w)
+      {
+        const auto previous = table[i - 1][w - weight];
+        if (value > 0 && previous > std::numeric_limits<std::int64_t>::max() - value)
+        {
+          throw std::overflow_error("Суммарная ценность не помещается в int64_t");
+        }
+        // Обе альтернативы читают предыдущую строку, предмет не используется повторно.
+        table[i][w] = std::max(table[i][w], previous + value);
+      }
+    }
+  }
+  result.maxValue = table.back().back();
+  auto remaining = static_cast<std::size_t>(capacity);
+  for (std::size_t i = items.size(); i > 0; --i)
+  {
+    if (table[i][remaining] != table[i - 1][remaining])
+    {
+      result.selected.push_back(i - 1);
+      remaining -= static_cast<std::size_t>(items[i - 1].weight);
+    }
+    // Даже при remaining == 0 продолжаем: могли быть выбраны предметы нулевого веса.
+  }
+  std::reverse(result.selected.begin(), result.selected.end());
+  return result;
+}
