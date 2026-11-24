@@ -1,0 +1,4 @@
+LIBRARY 1 3
+BOOK "C++ Primer" 2012 "Анна Иванова" "Stanley Lippman" 976
+MAGAZINE "Science" 2024 "" "AAAS" 12
+DVD "Interstellar" 2014 "" "Christopher Nolan" 169

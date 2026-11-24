@@ -1,0 +1,52 @@
+2
+1
+1
+C++ Primer
+2012
+Stanley Lippman
+976
+1
+2
+Science
+2024
+AAAS
+12
+1
+3
+Interstellar
+2014
+Christopher Nolan
+169
+2
+3
+0
+Анна Иванова
+2
+3
+0
+Пётр
+5
+0
+6
+media/library-example.txt
+4
+0
+4
+0
+5
+2
+2
+7
+media/library-example.txt
+2
+7
+media/invalid-library.txt
+2
+7
+media/no-such-library.txt
+5
+99
+oops
+9
+2
+0

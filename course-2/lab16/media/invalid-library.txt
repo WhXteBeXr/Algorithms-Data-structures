@@ -1,0 +1,3 @@
+LIBRARY 1 2
+BOOK "Valid temporary item" 2020 "" "Author" 10
+DVD "Invalid year" 0 "" "Director" 90
