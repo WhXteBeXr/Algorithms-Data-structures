@@ -1,0 +1,3 @@
+FLEET 1 2
+CAR "Valid temporary item" 2020 100000 100 5
+TRUCK "Invalid capacity" 2020 100000 100 0

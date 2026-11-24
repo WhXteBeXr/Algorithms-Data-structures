@@ -1,0 +1,8 @@
+classDiagram
+class Vehicle {
+  <<abstract>>
+}
+Fleet "1" *-- "0..*" Vehicle
+Vehicle <|-- Car
+Vehicle <|-- Truck
+Vehicle <|-- Motorcycle
