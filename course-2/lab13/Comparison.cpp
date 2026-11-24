@@ -12,14 +12,17 @@
 
 namespace
 {
+  // Создаёт связный граф из 100 вершин. Probability задаёт вероятность дополнительных рёбер в процентах.
   Graph randomGraph(int probability)
   {
     Graph graph(100);
+    // Для каждой плотности фиксируем seed, чтобы повторный запуск получил тот же граф.
     std::mt19937 generator(2026 + probability);
     std::bernoulli_distribution hasEdge(probability / 100.0);
     std::uniform_int_distribution<int> weight(1, 100);
     for (int from = 0; from < graph.vertexCount(); ++from)
     {
+      // Рассматриваем каждую неупорядоченную пару один раз, без петель и дублирования.
       for (int to = from + 1; to < graph.vertexCount(); ++to)
       {
         // Цепочка гарантирует связность. Остальные пары добавляются независимо.
@@ -32,6 +35,8 @@ namespace
     return graph;
   }
 
+  // Возвращает среднее время одного из 10 вызовов action в микросекундах.
+  // Checksum по ссылке накапливает веса всех полученных остовов для последующей проверки.
   template <typename Action>
   double measure(Action action, std::int64_t& checksum)
   {
@@ -45,6 +50,7 @@ namespace
   }
 }
 
+// Сравнивает Прима и Краскала на одних графах трёх плотностей, печатает медианы пяти серий.
 void runComparison(std::ostream& out)
 {
   out << "\nСравнение производительности\n"
@@ -54,6 +60,7 @@ void runComparison(std::ostream& out)
   for (int probability : {20, 60, 90})
   {
     const auto graph = randomGraph(probability);
+    // Сначала проверяем согласованность решений, только затем измеряем корректные алгоритмы.
     const auto prim = graph.prim();
     const auto kruskal = graph.kruskal();
     if (prim.weight != kruskal.weight || prim.edges.size() != 99 || kruskal.edges.size() != 99)
@@ -78,10 +85,12 @@ void runComparison(std::ostream& out)
         primTimes[trial] = measure([&] { return graph.prim(); }, primSum);
       }
     }
+    // Пять серий по десять вызовов должны дать 50 одинаковых весов у каждого алгоритма.
     if (primSum != 50 * prim.weight || kruskalSum != primSum)
     {
       throw std::logic_error("Не совпали контрольные суммы измерений");
     }
+    // Центральное время упорядоченных серий меньше зависит от единичных задержек системы.
     std::sort(primTimes.begin(), primTimes.end());
     std::sort(kruskalTimes.begin(), kruskalTimes.end());
     out << "p=" << probability << "%, E=" << graph.edgeCount() << ", MST=" << prim.weight

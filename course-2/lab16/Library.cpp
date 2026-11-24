@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <utility>
 
+// Принимает единоличное владение готовым объектом, пустой указатель отвергает.
 void Library::add(std::unique_ptr<MediaItem> item)
 {
   if (!item)
@@ -15,6 +16,7 @@ void Library::add(std::unique_ptr<MediaItem> item)
   items.push_back(std::move(item));
 }
 
+// Возвращает ссылку без передачи владения. Пустая коллекция и неверный индекс дают исключения.
 MediaItem& Library::at(std::size_t index)
 {
   if (items.empty())
@@ -25,15 +27,18 @@ MediaItem& Library::at(std::size_t index)
   {
     throw std::out_of_range("Нет издания с таким индексом");
   }
+  // Ссылка действует, пока существует объект, удаление или замена коллекции её инвалидирует.
   return *items[index];
 }
 
+// Удаляет объект по текущему индексу, последующие индексы сдвигаются на один.
 void Library::remove(std::size_t index)
 {
   if (index >= items.size())
   {
     throw std::out_of_range("Нет издания для удаления");
   }
+  // Выданный экземпляр нельзя уничтожать до возврата, иначе потеряется действующая выдача.
   if (items[index]->isBorrowed())
   {
     throw std::logic_error("Сначала верните выданный экземпляр");
@@ -42,6 +47,7 @@ void Library::remove(std::size_t index)
   items.erase(items.begin() + static_cast<std::ptrdiff_t>(index));
 }
 
+// Выводит текущие индексы и полиморфное описание каждого объекта в переданный поток.
 void Library::print(std::ostream& out) const
 {
   out << "Изданий: " << items.size() << '\n';
@@ -52,6 +58,7 @@ void Library::print(std::ostream& out) const
   }
 }
 
+// Сохраняет весь каталог в текстовый файл, перезаписывая его. Коллекция в памяти не меняется.
 void Library::save(const std::string& filename) const
 {
   std::ofstream out(filename);
@@ -60,6 +67,7 @@ void Library::save(const std::string& filename) const
     throw std::runtime_error("Не удалось открыть файл для записи: " + filename);
   }
   out << "LIBRARY 1 " << items.size() << '\n';
+  // Общий заголовок задаёт формат, виртуальный save каждого наследника записывает его поля.
   for (const auto& item : items)
   {
     item->save(out);
@@ -72,6 +80,8 @@ void Library::save(const std::string& filename) const
   }
 }
 
+// Заменяет коллекцию содержимым файла только после полной проверки всех записей.
+// При ошибке временные объекты освобождаются, прежняя коллекция сохраняется.
 void Library::load(const std::string& filename)
 {
   std::ifstream in(filename);
@@ -86,6 +96,7 @@ void Library::load(const std::string& filename)
   {
     throw std::runtime_error("Пустой файл библиотеки");
   }
+  // Заголовок разбирается отдельно: проверяем тип файла, версию, число записей и остаток строки.
   std::istringstream header(line);
   if (!(header >> magic >> version >> count) || magic != "LIBRARY" || version != 1 || count < 0)
   {
@@ -104,10 +115,12 @@ void Library::load(const std::string& filename)
     {
       throw std::runtime_error("Не хватает записей библиотеки");
     }
+    // Одна строка соответствует одному объекту, поэтому нехватка полей не захватит следующую запись.
     std::istringstream record(line);
     try
     {
       auto item = MediaItem::read(record);
+      // После ожидаемых полей допускаются только пробелы, лишние данные означают повреждение записи.
       record >> std::ws;
       if (!record.eof())
       {
@@ -115,11 +128,13 @@ void Library::load(const std::string& filename)
       }
       loaded.push_back(std::move(item));
     }
+    // Ошибки параметров из конструктора переводим в файловую ошибку с контекстом записи.
     catch (const std::logic_error& error)
     {
       throw std::runtime_error(std::string("Неверные данные издания: ") + error.what());
     }
   }
+  // После заявленного числа объектов разрешены только пустые или пробельные строки.
   while (std::getline(in, line))
   {
     if (line.find_first_not_of(" \t\r") != std::string::npos)
@@ -127,6 +142,7 @@ void Library::load(const std::string& filename)
       throw std::runtime_error("Лишние записи после конца библиотеки");
     }
   }
+  // Физическую ошибку чтения нельзя принять за нормальный конец файла.
   if (in.bad())
   {
     throw std::runtime_error("Ошибка чтения библиотеки");

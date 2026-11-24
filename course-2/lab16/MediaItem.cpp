@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <utility>
 
+// Отклоняет пустой, пробельный и многострочный текст, сохраняя формат «один объект - одна строка».
 void MediaItem::checkText(std::string_view value)
 {
   if (value.find_first_not_of(" \t\r\n") == std::string_view::npos ||
@@ -18,6 +19,7 @@ void MediaItem::checkText(std::string_view value)
   }
 }
 
+// Общая проверка положительного количества: страниц, номера выпуска или минут.
 void MediaItem::checkAmount(int value)
 {
   if (value < 1 || value > 100000)
@@ -26,6 +28,7 @@ void MediaItem::checkAmount(int value)
   }
 }
 
+// Инициализирует проверенную общую часть. Borrower изначально пуст, экземпляр доступен.
 MediaItem::MediaItem(std::string title, int year) : title(std::move(title)), year(year)
 {
   checkText(this->title);
@@ -35,6 +38,7 @@ MediaItem::MediaItem(std::string title, int year) : title(std::move(title)), yea
   }
 }
 
+// Выдаёт доступный экземпляр читателю. Повторная выдача отклоняется до изменения состояния.
 void MediaItem::issue(std::string reader)
 {
   checkText(reader);
@@ -42,18 +46,22 @@ void MediaItem::issue(std::string reader)
   {
     throw std::logic_error("Экземпляр уже выдан");
   }
+  // Имя хранится в самом объекте, непустая строка одновременно служит признаком выдачи.
   borrower = std::move(reader);
 }
 
+// Возвращает выданный экземпляр в библиотеку, повторный возврат считается ошибкой.
 void MediaItem::giveBack()
 {
   if (!isBorrowed())
   {
     throw std::logic_error("Экземпляр уже находится в библиотеке");
   }
+  // Очистка имени переводит экземпляр в доступное состояние без отдельного флага.
   borrower.clear();
 }
 
+// Печатает общую часть, детали наследника и статус выдачи, не меняя объект.
 void MediaItem::print(std::ostream& out) const
 {
   // Общая часть вывода одна, детали выбираются виртуально по фактическому типу.
@@ -62,11 +70,14 @@ void MediaItem::print(std::ostream& out) const
   out << (isBorrowed() ? ", выдан: " + borrower : ", доступен") << '\n';
 }
 
+// Пишет общий префикс записи, включая тег типа и читателя для восстановления выдачи.
 void MediaItem::saveCommon(std::ostream& out) const
 {
   out << type() << ' ' << std::quoted(title) << ' ' << year << ' ' << std::quoted(borrower) << ' ';
 }
 
+// Фабрика выбирает наследника по тегу и возвращает владельца через единый базовый тип.
+// Проверки полей выполняются конструкторами независимо от источника данных.
 std::unique_ptr<MediaItem> MediaItem::create(std::string_view type, std::string title, int year,
                                           std::string creator, int amount)
 {
@@ -85,6 +96,7 @@ std::unique_ptr<MediaItem> MediaItem::create(std::string_view type, std::string 
   throw std::invalid_argument("Неизвестный тип издания");
 }
 
+// Разбирает поля одной записи и возвращает готовый объект с восстановленным статусом выдачи.
 std::unique_ptr<MediaItem> MediaItem::read(std::istream& in)
 {
   std::string type, title, reader, creator;
@@ -93,7 +105,9 @@ std::unique_ptr<MediaItem> MediaItem::read(std::istream& in)
   {
     throw std::runtime_error("Неполная или неверная запись издания");
   }
+  // Сначала создаётся доступный экземпляр, затем при необходимости восстанавливается читатель.
   auto item = create(type, std::move(title), year, std::move(creator), amount);
+  // Обычный issue повторно проверяет имя, поэтому загрузка не обходит правила модели.
   if (!reader.empty())
   {
     item->issue(std::move(reader));

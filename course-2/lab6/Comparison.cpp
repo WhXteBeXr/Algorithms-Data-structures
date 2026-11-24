@@ -9,6 +9,8 @@
 #include <stdexcept>
 #include <vector>
 
+// Выводит сравнение трёх сортировок на одинаковых обратных массивах разных размеров.
+// Для каждой пары размера и алгоритма берётся медиана пяти отдельных замеров.
 void compareSorts(std::ostream& out)
 {
   out << "\n=== Сравнение сортировок на обратном массиве ===\n"
@@ -16,6 +18,7 @@ void compareSorts(std::ostream& out)
       << std::setw(8) << "N" << std::setw(14) << "Algorithm" << std::setw(16) << "time_us" << '\n';
   for (int count : {100, 1000, 5000})
   {
+    // Последовательность N..1 задаёт одинаковый исходный порядок для всех алгоритмов.
     std::vector<int> original(count);
     for (int i = 0; i < count; ++i)
     {
@@ -23,10 +26,12 @@ void compareSorts(std::ostream& out)
     }
     for (const auto& algorithm : sortingAlgorithms)
     {
+      // Каждый повтор начинает с исходного массива, а не с результата прошлого запуска.
       std::array<double, 5> times{};
       for (double& time : times)
       {
         auto values = original; // Копирование не входит в измеряемый интервал.
+        // Монотонные часы измеряют только сортировку, без подготовки и проверки.
         const auto start = std::chrono::steady_clock::now();
         algorithm.sort(values);
         const auto finish = std::chrono::steady_clock::now();
@@ -41,6 +46,7 @@ void compareSorts(std::ostream& out)
         }
       }
       // std::sort применяется только к пяти временам, сами данные сортируют наши функции.
+      // Средний элемент упорядоченных времён меньше зависит от единичных задержек системы.
       std::sort(times.begin(), times.end());
       out << std::fixed << std::setprecision(2) << std::setw(8) << count << std::setw(14) << algorithm.name
           << std::setw(16) << times[times.size() / 2] << '\n';

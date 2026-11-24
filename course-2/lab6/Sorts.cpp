@@ -2,10 +2,13 @@
 
 #include <utility>
 
+// Сортирует по возрастанию обменами соседей. Span изменяет исходные элементы без копии массива.
 void bubbleSort(std::span<int> values)
 {
+  // end отделяет ещё не готовую часть от уже поставленных справа максимумов.
   for (std::size_t end = values.size(); end > 1; --end)
   {
+    // Флаг относится к одному проходу и позволяет распознать готовый порядок.
     bool swapped = false;
     for (std::size_t i = 1; i < end; ++i)
     {
@@ -23,10 +26,12 @@ void bubbleSort(std::span<int> values)
   }
 }
 
-void insertionSort(std::span<int> values)
+// Расширяет отсортированный префикс, вставляя в него очередной элемент справа.
+void insertionSort(std::span<i1nt> values)
 {
   for (std::size_t i = 1; i < values.size(); ++i)
   {
+    // Сохраняем вставляемое значение до сдвигов, которые перезапишут его прежнюю ячейку.
     const int key = values[i];
     std::size_t position = i;
     // Левая часть уже отсортирована. Освобождаем место сдвигом больших значений.
@@ -35,10 +40,12 @@ void insertionSort(std::span<int> values)
       values[position] = values[position - 1];
       --position;
     }
+    // Все большие значения уже сдвинуты, position указывает на освободившееся место.
     values[position] = key;
   }
 }
 
+// На каждом шаге выбирает минимум остатка и ставит его на первую свободную позицию.
 void selectionSort(std::span<int> values)
 {
   for (std::size_t i = 0; i < values.size(); ++i)
@@ -52,6 +59,7 @@ void selectionSort(std::span<int> values)
         minimum = j;
       }
     }
+    // Один обмен закрепляет очередной минимум. Готовый префикс больше не затрагивается.
     if (minimum != i)
     {
       std::swap(values[i], values[minimum]);
